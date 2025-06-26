@@ -6,3 +6,6 @@ declare module 'stream-chat' {
     // Add as many custom fields as you'd like
   }
 }
+
+
+
