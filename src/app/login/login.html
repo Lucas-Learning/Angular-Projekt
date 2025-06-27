@@ -1,5 +1,6 @@
-<h1>Login</h1>
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
+<div class="form-wrapper">
+ <h1>Login</h1>
+ <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <div>
     <input type="email" placeholder="Email" formControlName="emailId" />
   </div>
@@ -9,4 +10,5 @@
   <div>
     <button type="submit">Log In</button>
   </div>
-</form>
+ </form>
+</div>
