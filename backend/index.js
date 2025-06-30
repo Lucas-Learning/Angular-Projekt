@@ -7,7 +7,9 @@ app.use(cors());
 app.use(bodyParser.json());
 
 const users = []; // In-memory storage (replace with a DB later)
-
+app.get('/api/getusers', (req,res) =>{
+  res.status(200).json({users});
+});
 // Register
 app.post('/api/register', (req, res) => {
   const { emailId, fullName, password } = req.body;

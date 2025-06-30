@@ -23,7 +23,7 @@ export class App {
       Authorization: `Bearer ${token}`
     })
     this.http
-      .get<{ user: UserInterface }>('https://api.freeprojectapi.com/api/UserApp/GetAllUsers')
+      .get<{ user: UserInterface }>('/api/getusers')
       .subscribe({
         next: (response) => {
           console.log('response', response);
