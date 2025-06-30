@@ -22,17 +22,6 @@ export class App {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`
     })
-    this.http
-      .get<{ user: UserInterface }>('/api/getusers')
-      .subscribe({
-        next: (response) => {
-          console.log('response', response);
-          this.authService.currentUserSig.set(response.user);
-        },
-        error: () => {
-          this.authService.currentUserSig.set(null);
-        },
-      });
   }
 
   logout(): void {

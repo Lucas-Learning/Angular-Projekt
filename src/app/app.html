@@ -1,9 +1,11 @@
-<div *ngIf="authService.currentUserSig() === null">
-    <a routerLink="/login">Login</a>
-    <a routerLink="/signup">Register</a>
-  </div>
-  <div *ngIf="authService.currentUserSig()">
-    {{ authService.currentUserSig()?.fullName }}
-    <span (click)="logout()">Logout</span>
-  </div>
+<h1>Home</h1>
+<p *ngIf="authService.currentUserSig() as user">
+  Welcome back, {{ user.fullName }}!
+</p>
+<p *ngIf="!authService.currentUserSig()">You're not logged in.</p>
+
+<nav>
+  <a routerLink="/login">Login</a> |
+  <a routerLink="/signup">Signup</a>
+</nav>
   <router-outlet></router-outlet>

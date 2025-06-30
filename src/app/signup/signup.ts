@@ -23,14 +23,9 @@ export class Signup {
     password: ['', Validators.required],
   });
   onSubmit(): void {
-    this.http.post('http://localhost:3000/api/register', {
-  emailId: 'test@example.com',
-  fullName: 'Test User',
-  password: '123456'
-});
+   
     console.log(this.form.getRawValue())
     this.http
-    
       .post<{ user: UserInterface }>('http://localhost:3000/api/register', 
         this.form.getRawValue(),
       )
@@ -38,6 +33,22 @@ export class Signup {
         console.log('response', response);
         this.authService.currentUserSig.set(response.user);
         this.router.navigateByUrl('/');
+      });
+      this.http
+      .get<{ users: UserInterface[] }>('/api/getusers')
+      .subscribe({
+        next: (response) => {
+          console.log('response', response);
+          if(response.users.length > 0){
+            this.authService.currentUserSig.set(response.users[0]);
+          }
+          else{
+            this.authService.currentUserSig.set(null);
+          }
+        },
+        error: () => {
+          this.authService.currentUserSig.set(null);
+        },
       });
   }
 }
