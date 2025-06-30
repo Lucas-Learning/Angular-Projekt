@@ -29,7 +29,7 @@ export class Login {
 
     this.http
       .post<{ token: string; user: UserInterface }>(
-        'https://api.freeprojectapi.com/api/UserApp/Login',
+        'http://localhost:3000/api/login',
         payload
       )
       .subscribe({

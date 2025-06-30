@@ -23,10 +23,15 @@ export class Signup {
     password: ['', Validators.required],
   });
   onSubmit(): void {
+    this.http.post('http://localhost:3000/api/register', {
+  emailId: 'test@example.com',
+  fullName: 'Test User',
+  password: '123456'
+});
     console.log(this.form.getRawValue())
     this.http
     
-      .post<{ user: UserInterface }>('https://api.freeprojectapi.com/api/UserApp/CreateNewUser', 
+      .post<{ user: UserInterface }>('http://localhost:3000/api/register', 
         this.form.getRawValue(),
       )
       .subscribe((response) => {
