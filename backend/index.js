@@ -2,11 +2,25 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const User = require('./models/User'); 
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const User = require('./models/User');
+const Message = require('./models/Message');
+const socketIo = require('socket.io');
+const http = require('http');
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: 'http://localhost:4200',
+    methods: ['GET','POST']
+  }
+})
 app.use(cors());
 app.use(bodyParser.json());
+
+const JWT_SECRET = 'your-very-secret-key'; // use env var in real projects
 
 mongoose.connect('mongodb://localhost:27017/ChatDB', {
   useNewUrlParser: true,
@@ -14,6 +28,15 @@ mongoose.connect('mongodb://localhost:27017/ChatDB', {
 })
 .then(() => console.log('Connected to MongoDB'))
 .catch(err => console.error('MongoDB connection error:', err));
+
+io.on('connection', (socket) =>{
+  console.log('A user connected:', socket.id);
+  
+
+  socket.on('disconnect', () =>{
+    console.log('User disconnected', socket.id);
+  });
+});
 
 app.get('/api/getusers', async (req, res) => {
   try {
@@ -23,11 +46,18 @@ app.get('/api/getusers', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch users', details: err.message });
   }
 });
+
 // Register
 app.post('/api/register', async (req, res) => {
   const { emailId, fullName, password } = req.body;
   try {
-    const newUser = new User({ emailId, fullName, password });
+    const existingUser = await User.findOne({ emailId });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({ emailId, fullName, password: hashedPassword });
     await newUser.save();
     res.status(201).json({ message: 'User registered!' });
   } catch (err) {
@@ -40,17 +70,55 @@ app.post('/api/login', async (req, res) => {
   const { emailId, password } = req.body;
   try {
     const user = await User.findOne({ emailId });
-
-    if (!user || user.password !== password) {
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    res.json({ token: 'fake-jwt-token', user });
+    const token = jwt.sign({ id: user._id, emailId: user.emailId }, JWT_SECRET, {
+      expiresIn: '2h'
+    });
+
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        emailId: user.emailId,
+        fullName: user.fullName
+      }
+    });
   } catch (err) {
     res.status(500).json({ error: 'Login failed', details: err.message });
   }
 });
+// Get messages
+app.get('/api/messages', async (req, res) => {
+  try {
+    const messages = await Message.find().sort({ timestamp: -1 }).limit(50);
+    res.json(messages);
+  } catch (err) {
+    res.status(500).json({ error: 'Could not fetch messages' });
+  }
+});
 
-app.listen(3000, () => {
+app.post('/api/messages', async (req, res) => {
+  const { text, sender } = req.body;
+  try {
+    const msg = new Message({ text, sender });
+    await msg.save();
+
+    // ✅ Emit the new message to all clients
+    io.emit('message', {
+      text: msg.text,
+      sender: msg.sender,
+      timestamp: msg.timestamp,
+    });
+
+    res.status(201).json({ message: 'Message sent' });
+  } catch (err) {
+    res.status(500).json({ error: 'Could not send message' });
+  }
+});
+
+server.listen(3000, () => {
   console.log('Server running on http://localhost:3000');
 });

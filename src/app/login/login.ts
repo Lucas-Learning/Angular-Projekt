@@ -27,8 +27,7 @@ export class Login {
     const payload = this.form.getRawValue();
     console.log('Logging in with:', payload);
 
-    this.http
-      .post<{ token: string; user: UserInterface }>(
+    this.http.post<{ token: string; user: UserInterface }>(
         'http://localhost:3000/api/login',
         payload
       )
@@ -43,7 +42,7 @@ export class Login {
           this.authService.currentUserSig.set(response.user);
 
           // Navigate to homepage or dashboard
-          this.router.navigateByUrl('/');
+          this.router.navigateByUrl('/chat');
         },
         error: (err) => {
           console.error('Login failed:', err);

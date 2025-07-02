@@ -1,58 +1,71 @@
-import { Component, OnInit } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
-import { User } from 'stream-chat';
-import {
-  ChatClientService,
-  ChannelService,
-  StreamI18nService,
-  StreamAutocompleteTextareaModule,
-  StreamChatModule,
-} from 'stream-chat-angular';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../app-layout/auth.service';
+import { io, Socket } from 'socket.io-client';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [
-    TranslateModule,
-    StreamAutocompleteTextareaModule,
-    StreamChatModule
-  ],
   templateUrl: './chat.html',
-  styleUrl: './chat.scss'
+  imports: [CommonModule, ReactiveFormsModule],
 })
-export class Chat implements OnInit {
-  constructor(
-    private chatService: ChatClientService,
-    private channelService: ChannelService,
-    private streamI18nService: StreamI18nService,
-  ){
+export class Chat implements OnInit, OnDestroy {
+  fb = inject(FormBuilder);
+  http = inject(HttpClient);
+  authService = inject(AuthService);
 
+  form: FormGroup = this.fb.group({
+    message: ['', Validators.required],
+  });
 
-    const apiKey = 'dz5f4d5kzrue';
-    const userId = 'dawn-tree-5';
-    const userToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZGF3bi10cmVlLTUiLCJleHAiOjE3NTAxNzc1MDd9._JGoCfLpsh1bAukNF3VJP1b9NGdRI6V99uhhlu-rfJY';
-    const userName = 'dawn';
+  messages: { text: string; sender: string; timestamp: string }[] = [];
 
-    const user: User = {
-      id: userId,
-      name: userName,
-      image: `https://getstream.io/random_png/?name=${userName}`,
-    };
+  socket!: Socket;
 
-    this.chatService.init(apiKey, user, userToken);
-    this.streamI18nService.setTranslation();
-  
+  ngOnInit(): void {
+    this.loadMessages();
+
+    // ✅ Connect to your Socket.IO server
+    this.socket = io('http://localhost:3000');
+
+    // ✅ Listen for 'message' events
+    this.socket.on('message', (msg) => {
+      this.messages.unshift(msg); // Add new message to top
+    });
   }
-    async ngOnInit() {
-      const channel = this.chatService.chatClient.channel('messaging', 'talking-about-angular', {
-        // add as many custom fields as you'd like
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Angular_full_color_logo.svg/2048px-Angular_full_color_logo.svg.png',
-        name: 'Talking about Angular',
-      });
-      await channel.create();
-      this.channelService.init({
-        type: 'messaging',
-        id: { $eq: 'talking-about-angular' },
-      });
+
+  ngOnDestroy(): void {
+    // ✅ Clean up connection
+    if (this.socket) {
+      this.socket.disconnect();
     }
   }
+
+  loadMessages() {
+    this.http.get<any[]>('http://localhost:3000/api/messages').subscribe({
+      next: (data) => (this.messages = data.reverse()),
+      error: (err) => console.error('Failed to load messages', err),
+    });
+  }
+
+  sendMessage(): void {
+    if (this.form.invalid) return;
+
+    const currentUser = this.authService.currentUserSig();
+    const payload = {
+      text: this.form.value.message,
+      sender: currentUser?.emailId || 'Unknown',
+    };
+
+    this.http.post('http://localhost:3000/api/messages', payload).subscribe({
+      next: () => {
+        this.form.reset();
+        // ❌ Don't reload all messages again
+        // ✅ Instead, rely on socket.io to receive the new one
+      },
+      error: (err) => console.error('Failed to send message', err),
+    });
+  }
+}
