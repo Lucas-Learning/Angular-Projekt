@@ -1,25 +1,24 @@
 import { Routes } from '@angular/router';
 import { AppLayout } from './app-layout/app-layout';
+import { Login } from './login/login';
+import { Signup } from './signup/signup';
+import { Chat } from './chat/chat';
 
 export const routes: Routes = [
   {
     path: '',
     component: AppLayout,
-    // Only child routes that should share the layout go here
-    children: [
-      // e.g. dashboard, home, etc
-    ]
   },
   {
     path: 'chat',
-    loadComponent: () => import('./chat/chat').then(m => m.Chat), // independent
+    component:Chat
   },
   {
     path: 'login',
-    loadComponent: () => import('./login/login').then(m => m.Login),
+    component:Login
   },
   {
     path: 'signup',
-    loadComponent: () => import('./signup/signup').then(m => m.Signup)
+    component:Signup
   }
 ];

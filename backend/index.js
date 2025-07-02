@@ -14,7 +14,6 @@ mongoose.connect('mongodb://localhost:27017/ChatDB', {
 })
 .then(() => console.log('Connected to MongoDB'))
 .catch(err => console.error('MongoDB connection error:', err));
-// In-memory storage (replace with a DB later)
 
 app.get('/api/getusers', async (req, res) => {
   try {
