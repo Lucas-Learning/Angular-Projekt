@@ -16,6 +16,7 @@ export class Signup {
   http = inject(HttpClient);
   authService = inject(AuthService);
   router = inject(Router);
+  API_BASE = 'http://10.0.11.4:3000';
 
   form = this.fb.nonNullable.group({
     emailId: ['', Validators.required],
@@ -26,7 +27,7 @@ export class Signup {
    
     console.log(this.form.getRawValue())
     this.http
-      .post<{ user: UserInterface }>('http://localhost:3000/api/register', 
+      .post<{ user: UserInterface }>(`${this.API_BASE}/api/register`, 
         this.form.getRawValue(),
       )
       .subscribe((response) => {

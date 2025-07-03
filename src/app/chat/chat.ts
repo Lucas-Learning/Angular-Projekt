@@ -1,9 +1,10 @@
+// chat.ts
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../app-layout/auth.service';
-import { io, Socket } from 'socket.io-client';
+import { SocketService } from '../socket'; // ✅ Use your SocketService
 
 @Component({
   selector: 'app-chat',
@@ -11,10 +12,13 @@ import { io, Socket } from 'socket.io-client';
   templateUrl: './chat.html',
   imports: [CommonModule, ReactiveFormsModule],
 })
+
 export class Chat implements OnInit, OnDestroy {
+  API_BASE = 'http://10.0.11.4:3000';
   fb = inject(FormBuilder);
   http = inject(HttpClient);
   authService = inject(AuthService);
+  socketService = inject(SocketService); // ✅ Inject the service
 
   form: FormGroup = this.fb.group({
     message: ['', Validators.required],
@@ -22,29 +26,28 @@ export class Chat implements OnInit, OnDestroy {
 
   messages: { text: string; sender: string; timestamp: string }[] = [];
 
-  socket!: Socket;
+  private subscription: any;
+  
 
   ngOnInit(): void {
     this.loadMessages();
 
-    // ✅ Connect to your Socket.IO server
-    this.socket = io('http://localhost:3000');
-
-    // ✅ Listen for 'message' events
-    this.socket.on('message', (msg) => {
-      this.messages.unshift(msg); // Add new message to top
+    // ✅ Listen for incoming messages
+    this.subscription = this.socketService.listenForMessages().subscribe((msg) => {
+      this.messages.unshift(msg);
     });
   }
 
   ngOnDestroy(): void {
-    // ✅ Clean up connection
-    if (this.socket) {
-      this.socket.disconnect();
+    // ✅ Disconnect and clean up
+    this.socketService.disconnect();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 
   loadMessages() {
-    this.http.get<any[]>('http://localhost:3000/api/messages').subscribe({
+    this.http.get<any[]>(`${this.API_BASE}/api/messages`).subscribe({
       next: (data) => (this.messages = data.reverse()),
       error: (err) => console.error('Failed to load messages', err),
     });
@@ -59,11 +62,10 @@ export class Chat implements OnInit, OnDestroy {
       sender: currentUser?.emailId || 'Unknown',
     };
 
-    this.http.post('http://localhost:3000/api/messages', payload).subscribe({
+    this.http.post(`${this.API_BASE}/api/messages`, payload).subscribe({
       next: () => {
         this.form.reset();
-        // ❌ Don't reload all messages again
-        // ✅ Instead, rely on socket.io to receive the new one
+        // No need to manually add message, socket will push it
       },
       error: (err) => console.error('Failed to send message', err),
     });

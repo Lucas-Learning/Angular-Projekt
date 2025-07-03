@@ -17,6 +17,7 @@ export class Login {
   http = inject(HttpClient);
   authService = inject(AuthService);
   router = inject(Router);
+  API_BASE = 'http://10.0.11.4:3000';
 
   form = this.fb.nonNullable.group({
     emailId: ['', Validators.required],
@@ -26,28 +27,28 @@ export class Login {
   onSubmit(): void {
     const payload = this.form.getRawValue();
     console.log('Logging in with:', payload);
-
+  
     this.http.post<{ token: string; user: UserInterface }>(
-        'http://localhost:3000/api/login',
-        payload
-      )
-      .subscribe({
-        next: (response) => {
-          console.log('Login response:', response);
-
-          // Save token to localStorage
-          localStorage.setItem('token', response.token);
-
-          // Update current user in auth service
-          this.authService.currentUserSig.set(response.user);
-
-          // Navigate to homepage or dashboard
-          this.router.navigateByUrl('/chat');
-        },
-        error: (err) => {
-          console.error('Login failed:', err);
-          alert('Login failed. Check your credentials.');
-        },
-      });
+      `${this.API_BASE}/api/login`,
+      payload
+    ).subscribe({
+      next: (response) => {
+        console.log('Login response:', response);
+  
+        // Save token & user to sessionStorage
+        sessionStorage.setItem('auth_token', response.token);
+        sessionStorage.setItem('auth_user', JSON.stringify(response.user));
+  
+        // Update AuthService state
+        this.authService.currentUserSig.set(response.user);
+  
+        // Navigate to chat
+        this.router.navigateByUrl('/chat');
+      },
+      error: (err) => {
+        console.error('Login failed:', err);
+        alert('Login failed. Check your credentials.');
+      },
+    });
   }
 }
