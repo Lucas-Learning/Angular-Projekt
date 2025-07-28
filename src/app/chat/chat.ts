@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../app-layout/auth.service';
-import { SocketService } from '../socket'; // ✅ Use your SocketService
+import { SocketService } from '../socket';
 
 @Component({
   selector: 'app-chat',
@@ -18,7 +18,7 @@ export class Chat implements OnInit, OnDestroy {
   fb = inject(FormBuilder);
   http = inject(HttpClient);
   authService = inject(AuthService);
-  socketService = inject(SocketService); // ✅ Inject the service
+  socketService = inject(SocketService);
 
   form: FormGroup = this.fb.group({
     message: ['', Validators.required],
@@ -31,15 +31,12 @@ export class Chat implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadMessages();
-
-    // ✅ Listen for incoming messages
     this.subscription = this.socketService.listenForMessages().subscribe((msg) => {
       this.messages.unshift(msg);
     });
   }
 
   ngOnDestroy(): void {
-    // ✅ Disconnect and clean up
     this.socketService.disconnect();
     if (this.subscription) {
       this.subscription.unsubscribe();
