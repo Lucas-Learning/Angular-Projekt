@@ -11,6 +11,7 @@ import { HttpHeaders } from '@angular/common/http';
   standalone: true,
   imports: [CommonModule, RouterModule, RouterLink],
   templateUrl: './app.html',
+  styleUrl: './app.scss'
 })
 export class App {
   authService = inject(AuthService);

@@ -1,11 +1,13 @@
-<h1>Home</h1>
+<div class="topnav">
+<img src="/public/Toki.png">
 <p *ngIf="authService.currentUserSig() as user">
   Welcome back, {{ user.fullName }}!
 </p>
 <p *ngIf="!authService.currentUserSig()">You're not logged in.</p>
 
 <nav>
-  <a routerLink="/login">Login</a> |
+  <a routerLink="/login">Login</a>
   <a routerLink="/signup">Signup</a>
 </nav>
+</div>
   <router-outlet></router-outlet>
