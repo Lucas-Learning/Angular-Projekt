@@ -26,11 +26,14 @@ export class Chat implements OnInit, OnDestroy {
   });
 
   messages: { text: string; sender: string; timestamp: string }[] = [];
+  currentUser: string = ""
 
   private subscription: any;
   
 
   ngOnInit(): void {
+    const user = this.authService.currentUserSig();
+    this.currentUser = user?.fullName || 'Unknown';
     this.loadMessages();
     this.subscription = this.socketService.listenForMessages().subscribe((msg) => {
       this.messages.unshift(msg);
