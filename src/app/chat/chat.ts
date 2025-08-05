@@ -10,6 +10,7 @@ import { SocketService } from '../socket';
   selector: 'app-chat',
   standalone: true,
   templateUrl: './chat.html',
+  styleUrl: './chat.scss',
   imports: [CommonModule, ReactiveFormsModule],
 })
 
