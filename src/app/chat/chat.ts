@@ -1,5 +1,5 @@
 // chat.ts
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -15,6 +15,7 @@ import { SocketService } from '../socket';
 })
 
 export class Chat implements OnInit, OnDestroy {
+  @ViewChild('messagesList') messagesList!: ElementRef<HTMLDivElement>;
   API_BASE = 'http://10.0.11.147:3000';
   fb = inject(FormBuilder);
   http = inject(HttpClient);
@@ -37,8 +38,15 @@ export class Chat implements OnInit, OnDestroy {
     this.loadMessages();
     this.subscription = this.socketService.listenForMessages().subscribe((msg) => {
       this.messages.unshift(msg);
+      this.scrollToBottom();
     });
   }
+scrollToBottom(): void {
+  setTimeout(() => {
+    const container = this.messagesList?.nativeElement;
+    container?.scrollTo({ top: 0, behavior: 'smooth' }); // column-reverse = scrollTop 0 is bottom
+  });
+}
 
   ngOnDestroy(): void {
     this.socketService.disconnect();
@@ -49,7 +57,10 @@ export class Chat implements OnInit, OnDestroy {
 
   loadMessages() {
     this.http.get<any[]>(`${this.API_BASE}/api/messages`).subscribe({
-      next: (data) => (this.messages = data.reverse()),
+      next: (data) => {
+        this.messages = data.reverse();
+        this.scrollToBottom();
+      },
       error: (err) => console.error('Failed to load messages', err),
     });
   }
