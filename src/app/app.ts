@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterOutlet, RouterModule } from '@angular/router';
+import { RouterLink, RouterOutlet, RouterModule, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../app/app-layout/auth.service';
 import { UserInterface } from '../app/app-layout/user.interface';
@@ -16,6 +16,7 @@ import { HttpHeaders } from '@angular/common/http';
 export class App {
   authService = inject(AuthService);
   http = inject(HttpClient);
+  router = inject(Router);
 
   ngOnInit(): void {
     const token = localStorage.getItem('token');
@@ -27,7 +28,7 @@ export class App {
 
   logout(): void {
     console.log('logout');
-    localStorage.setItem('token', '');
-    this.authService.currentUserSig.set(null);
+    this.authService.logout();
+    this.router.navigateByUrl('/');
   }
 }

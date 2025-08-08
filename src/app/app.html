@@ -5,9 +5,24 @@
 </p>
 <p *ngIf="!authService.currentUserSig()">You're not logged in.</p>
 
-<nav>
+<!-- Show login/signup links only when NOT logged in -->
+<nav *ngIf="!authService.currentUserSig()">
   <a routerLink="/login" class="Login">Login</a>
   <a routerLink="/signup" class="Signup">Signup</a>
 </nav>
+
+<!-- Show logout button and chat link when logged in -->
+<nav *ngIf="authService.currentUserSig()">
+  <a routerLink="/chat" class="Chat">Chat</a>
+  <button (click)="logout()" class="Logout">Logout</button>
+</nav>
 </div>
+
+<!-- Show different content based on authentication state -->
+<div *ngIf="!authService.currentUserSig()">
   <router-outlet></router-outlet>
+</div>
+
+<div *ngIf="authService.currentUserSig()">
+  <router-outlet></router-outlet>
+</div>
