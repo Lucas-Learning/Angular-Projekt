@@ -58,7 +58,7 @@ scrollToBottom(): void {
   loadMessages() {
     this.http.get<any[]>(`${this.API_BASE}/api/messages`).subscribe({
       next: (data) => {
-        this.messages = data;
+        this.messages = data.reverse();
         this.scrollToBottom();
       },
       error: (err) => console.error('Failed to load messages', err),
