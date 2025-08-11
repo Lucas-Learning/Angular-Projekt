@@ -15,7 +15,7 @@ import { SocketService } from '../socket';
 })
 
 export class Chat implements OnInit, OnDestroy {
-  @ViewChild('messagesList') messagesList!: ElementRef<HTMLDivElement>;
+  @ViewChild('messagesContainer') messagesList!: ElementRef<HTMLDivElement>;
   API_BASE = 'http://10.0.11.147:3000';
   fb = inject(FormBuilder);
   http = inject(HttpClient);
@@ -37,14 +37,14 @@ export class Chat implements OnInit, OnDestroy {
     this.currentUser = user?.fullName || 'Unknown';
     this.loadMessages();
     this.subscription = this.socketService.listenForMessages().subscribe((msg) => {
-      this.messages.unshift(msg);
+      this.messages.push(msg);
       this.scrollToBottom();
     });
   }
 scrollToBottom(): void {
   setTimeout(() => {
     const container = this.messagesList?.nativeElement;
-    container?.scrollTo({ top: 0, behavior: 'smooth' }); // column-reverse = scrollTop 0 is bottom
+    container?.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
   });
 }
 
