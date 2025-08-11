@@ -13,7 +13,6 @@
 
 <!-- Show logout button and chat link when logged in -->
 <nav *ngIf="authService.currentUserSig()">
-  <a routerLink="/chat" class="Chat">Chat</a>
   <button (click)="logout()" class="Logout">Logout</button>
 </nav>
 </div>
