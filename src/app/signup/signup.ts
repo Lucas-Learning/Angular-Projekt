@@ -35,6 +35,7 @@ export class Signup {
         this.authService.currentUserSig.set(response.user);
         this.router.navigateByUrl('/');
       });
+      /*
       this.http
       .get<{ users: UserInterface[] }>('/api/getusers')
       .subscribe({
@@ -50,7 +51,7 @@ export class Signup {
         error: () => {
           this.authService.currentUserSig.set(null);
         },
-      });
+      });*/
   }
 }
 
