@@ -20,12 +20,15 @@ export class Signup {
   API_BASE = 'http://10.0.11.147:3000';
 
   form = this.fb.nonNullable.group({
-    emailId: ['', Validators.required, Validators.email],
+    emailId: ['', [Validators.required, Validators.email]],
     fullName: ['', Validators.required],
     password: ['', Validators.required],
   });
   onSubmit(): void {
-   
+   if (this.form.invalid) {
+    this.form.markAllAsTouched();
+    return; // Stop here if invalid
+   }
     console.log(this.form.getRawValue())
     this.http
       .post<{ user: UserInterface }>(`${this.API_BASE}/api/register`, 
