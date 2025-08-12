@@ -44,6 +44,7 @@ export class Login {
   
         // Navigate to chat
         this.router.navigateByUrl('/chat');
+        location.reload()
       },
       error: (err) => {
         console.error('Login failed:', err);

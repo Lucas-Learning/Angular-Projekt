@@ -58,7 +58,7 @@ scrollToBottom(): void {
   loadMessages() {
     this.http.get<any[]>(`${this.API_BASE}/api/messages`).subscribe({
       next: (data) => {
-        this.messages = data;
+        this.messages = data.reverse();
         this.scrollToBottom();
       },
       error: (err) => console.error('Failed to load messages', err),
@@ -71,7 +71,7 @@ scrollToBottom(): void {
     const currentUser = this.authService.currentUserSig();
     const payload = {
       text: this.form.value.message,
-      sender: currentUser?.emailId || 'Unknown',
+      sender: currentUser?.fullName || 'Unknown',
     };
 
     this.http.post(`${this.API_BASE}/api/messages`, payload).subscribe({
