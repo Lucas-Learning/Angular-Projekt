@@ -3,11 +3,12 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserInterface } from '../app-layout/user.interface';
 import { AuthService } from '../app-layout/auth.service';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './signup.html',
   styleUrl: './signup.scss'
 })
@@ -19,7 +20,7 @@ export class Signup {
   API_BASE = 'http://10.0.11.147:3000';
 
   form = this.fb.nonNullable.group({
-    emailId: ['', Validators.required],
+    emailId: ['', Validators.required, Validators.email],
     fullName: ['', Validators.required],
     password: ['', Validators.required],
   });
