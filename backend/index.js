@@ -98,7 +98,6 @@ app.post('/api/login', async (req, res) => {
     res.status(500).json({ error: 'Login failed', details: err.message });
   }
 });
-// Get messages
 app.get('/api/messages', async (req, res) => {
   try {
     const messages = await Message.find().sort({ timestamp: -1 }).limit(50);
@@ -113,8 +112,6 @@ app.post('/api/messages', async (req, res) => {
   try {
     const msg = new Message({ text, sender });
     await msg.save();
-
-    // ✅ Emit the new message to all clients
     io.emit('message', {
       text: msg.text,
       sender: msg.sender,
