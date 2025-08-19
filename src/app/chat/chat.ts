@@ -16,7 +16,7 @@ import { SocketService } from '../socket';
 
 export class Chat implements OnInit, OnDestroy {
   @ViewChild('messagesContainer') messagesList!: ElementRef<HTMLDivElement>;
-  API_BASE = 'http://10.0.11.147:3000';
+  API_BASE = 'http://10.131.210.84:3000';
   fb = inject(FormBuilder);
   http = inject(HttpClient);
   authService = inject(AuthService);
