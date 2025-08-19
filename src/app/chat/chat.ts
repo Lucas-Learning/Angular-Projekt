@@ -6,6 +6,13 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../app-layout/auth.service';
 import { SocketService } from '../socket';
 
+interface Message {
+  text: string;
+  sender: string;
+  timestamp: string;
+  replyTo?: { sender: string; text: string }; // Optional reply reference
+}
+
 @Component({
   selector: 'app-chat',
   standalone: true,
@@ -13,7 +20,6 @@ import { SocketService } from '../socket';
   styleUrl: './chat.scss',
   imports: [CommonModule, ReactiveFormsModule],
 })
-
 export class Chat implements OnInit, OnDestroy {
   @ViewChild('messagesContainer') messagesList!: ElementRef<HTMLDivElement>;
   API_BASE = 'http://10.0.11.147:3000';
@@ -26,42 +32,41 @@ export class Chat implements OnInit, OnDestroy {
     message: ['', Validators.required],
   });
 
-  messages: { text: string; sender: string; timestamp: string }[] = [];
-  currentUser: string = ""
+  messages: Message[] = [];
+  currentUser: string = '';
+  replyingTo: Message | null = null;
 
   private subscription: any;
-  
 
   ngOnInit(): void {
     const user = this.authService.currentUserSig();
     this.currentUser = user?.fullName || 'Unknown';
     this.loadMessages();
-    this.subscription = this.socketService.listenForMessages().subscribe((msg) => {
+
+    this.subscription = this.socketService.listenForMessages().subscribe((msg: Message) => {
       this.messages.push(msg);
       this.scrollToBottom();
     });
   }
-scrollToBottom(): void {
-  setTimeout(() => {
-    const container = this.messagesList?.nativeElement;
-    container?.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
-  });
-}
-onReply(msg: any) {
-  // Example: pre-fill the input with a reply format
-  this.form.get('message')?.setValue(`@${msg.sender} ${msg.text}\n`);
-}
 
+  scrollToBottom(): void {
+    setTimeout(() => {
+      const container = this.messagesList?.nativeElement;
+      container?.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+    });
+  }
 
-  ngOnDestroy(): void {
-    this.socketService.disconnect();
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+  // Trigger reply
+  onReply(msg: Message) {
+    this.replyingTo = msg;
+  }
+
+  cancelReply() {
+    this.replyingTo = null;
   }
 
   loadMessages() {
-    this.http.get<any[]>(`${this.API_BASE}/api/messages`).subscribe({
+    this.http.get<Message[]>(`${this.API_BASE}/api/messages`).subscribe({
       next: (data) => {
         this.messages = data.reverse();
         this.scrollToBottom();
@@ -74,17 +79,29 @@ onReply(msg: any) {
     if (this.form.invalid) return;
 
     const currentUser = this.authService.currentUserSig();
-    const payload = {
+    const payload: Message = {
       text: this.form.value.message,
       sender: currentUser?.fullName || 'Unknown',
+      timestamp: new Date().toISOString(),
+      replyTo: this.replyingTo
+        ? { sender: this.replyingTo.sender, text: this.replyingTo.text }
+        : undefined,
     };
 
     this.http.post(`${this.API_BASE}/api/messages`, payload).subscribe({
       next: () => {
         this.form.reset();
-        // No need to manually add message, socket will push it
+        this.replyingTo = null; // clear reply after sending
+        // socketService will push the message to update the list
       },
       error: (err) => console.error('Failed to send message', err),
     });
+  }
+
+  ngOnDestroy(): void {
+    this.socketService.disconnect();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

@@ -20,18 +20,27 @@
       <div *ngFor="let msg of messages; let i = index" 
            class="message-wrapper"
            [class.own-message]="msg.sender === currentUser"
-           [class.other-message]="msg.sender !== currentUser">
-        
+           [class.other-message]="msg.sender !== currentUser"
+           [class.replying]="msg.replyTo">
+
         <div class="message-bubble">
+          <!-- Reply Preview -->
+          <span class="message-reply" *ngIf="msg.replyTo">
+            Replying to {{ msg.replyTo.sender }}
+          </span>
+
+          <!-- Message Content -->
           <div class="message-content">
             <div class="message-text">{{ msg.text }}</div>
           </div>
+
+          <!-- Message Meta -->
           <div class="message-meta">
             <span class="message-sender" *ngIf="msg.sender !== currentUser">{{ msg.sender }}</span>
             <span class="message-time">{{ msg.timestamp | date:'short' }}</span>
           </div>
 
-          <!-- Reply button (appears on hover) -->
+          <!-- Reply button -->
           <button class="reply-btn" type="button" (click)="onReply(msg)">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M10 9V5l-7 7 7 7v-4h4c3.31 0 6 2.69 6 6v-2c0-4.42-3.58-8-8-8h-2z"/>
