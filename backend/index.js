@@ -22,7 +22,7 @@ const io = socketIo(server, {
 app.use(cors());
 app.use(bodyParser.json());
 
-const JWT_SECRET = 'your-very-secret-key'; // use env var in real projects
+const JWT_SECRET = 'your-very-secret-key'; //REPLACE WITH ENV
 
 //connects to the mongoDB database which is were all the data is
 mongoose.connect('mongodb://localhost:27017/ChatDB', {
@@ -39,7 +39,7 @@ io.on('connection', (socket) =>{
     console.log('User disconnected', socket.id);
   });
 });
-//a get request to get all the users from the database
+//a get request to get all the users from the database (Mostly for debbuging)
 app.get('/api/getusers', async (req, res) => {
   try {
     const users = await User.find({});
@@ -49,12 +49,12 @@ app.get('/api/getusers', async (req, res) => {
   }
 });
 
-// A post request which is called everytime we create a user
+// A post request which is called everytime we create a user 
 app.post('/api/register', async (req, res) => {
   //The format for the register body
   const { emailId, fullName, password } = req.body;
   try {
-    //Looks for if another use already has the same email
+    //Looks for if another user already has the same email
     const existingUser = await User.findOne({ emailId });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
@@ -69,7 +69,7 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-//Post request everytime someone logs in
+//Post request called everytime some tries to login
 app.post('/api/login', async (req, res) => {
   //The format to login
   const { emailId, password } = req.body;
@@ -84,18 +84,19 @@ app.post('/api/login', async (req, res) => {
       expiresIn: '2h'
     });
 
-    res.json({
+    /*res.json({
       token,
       user: {
         id: user._id,
         emailId: user.emailId,
         fullName: user.fullName
       }
-    });
+    });*/ //This bit was just fir debugging to see if I got a token
   } catch (err) {
     res.status(500).json({ error: 'Login failed', details: err.message });
   }
 });
+//Get request for what messages should be displayed (There is a limit function so it doesnt overload the server)
 app.get('/api/messages', async (req, res) => {
   try {
     const messages = await Message.find().sort({ timestamp: -1 }).limit(50);
@@ -104,7 +105,7 @@ app.get('/api/messages', async (req, res) => {
     res.status(500).json({ error: 'Could not fetch messages' });
   }
 });
-
+//Post request for when you send a msg and what information you are posting
 app.post('/api/messages', async (req, res) => {
   const { text, sender } = req.body;
   try {

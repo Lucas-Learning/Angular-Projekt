@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+//Message Scheme for the DB
 const MessageSchema = new mongoose.Schema({
   text: String,
   sender: String,
