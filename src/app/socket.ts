@@ -10,7 +10,7 @@ export class SocketService implements OnDestroy {
   private socket: Socket;
 
   constructor() {
-    this.socket = io('http://10.131.210.84:3000'); // your backend URL
+    this.socket = io('http://10.0.11.147:3000'); // your backend URL
   }
 
   listenForMessages(): Observable<any> {
