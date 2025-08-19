@@ -71,7 +71,7 @@ scrollToBottom(): void {
     const currentUser = this.authService.currentUserSig();
     const payload = {
       text: this.form.value.message,
-      sender: currentUser?.emailId || 'Unknown',
+      sender: currentUser?.fullName || 'Unknown',
     };
 
     this.http.post(`${this.API_BASE}/api/messages`, payload).subscribe({

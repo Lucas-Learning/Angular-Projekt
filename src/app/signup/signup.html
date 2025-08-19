@@ -2,16 +2,20 @@
   <h1>Register</h1>
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div>
-      <input type="text" placeholder="Full Name" formControlName="fullName" />
+      <input type="text" placeholder="Full Name" formControlName="fullName"/>
     </div>
     <div>
-      <input type="text" placeholder="Email" formControlName="emailId" />
+      <input type="email" placeholder="Email" formControlName="emailId"/>
+        <div *ngIf="form.get('emailId')?.invalid && form.get('emailId')?.touched">
+    Please enter a valid email address.
+  </div>
+
     </div>
     <div>
-      <input type="password" placeholder="Password" formControlName="password" />
+      <input type="password" placeholder="Password" formControlName="password"/>
     </div>
     <div>
-      <button type="submit">Sign Up</button>
+      <button type="submit" [disabled]="form.invalid">Sign Up</button>
     </div>
   </form>
 </div>
