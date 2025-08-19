@@ -1,5 +1,4 @@
 <div class="chat-container">
-  <!-- Chat Header -->
   <div class="chat-header">
     <div class="chat-header-info">
       <div class="chat-title">Chat Room</div>
@@ -13,8 +12,6 @@
       </button>
     </div>
   </div>
-
-  <!-- Messages Area -->
   <div class="messages-container">
     <div class="messages-list" #messagesContainer>
       <div *ngFor="let msg of messages; let i = index" 
@@ -34,23 +31,16 @@
       </div>
     </div>
   </div>
-
-  <!-- Message Input -->
   <div class="message-input-container">
     <form [formGroup]="form" (ngSubmit)="sendMessage()" class="message-form">
       <div class="input-wrapper">
-
-        
         <input 
           type="text" 
           formControlName="message" 
           placeholder="Type a message..." 
           class="message-input"
           autocomplete="off" />
-        
-   
       </div>
-      
       <button type="submit" class="send-btn" [disabled]="!form.get('message')?.value?.trim()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
           <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
