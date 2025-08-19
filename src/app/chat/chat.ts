@@ -47,6 +47,11 @@ scrollToBottom(): void {
     container?.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
   });
 }
+onReply(msg: any) {
+  // Example: pre-fill the input with a reply format
+  this.form.get('message')?.setValue(`@${msg.sender} ${msg.text}\n`);
+}
+
 
   ngOnDestroy(): void {
     this.socketService.disconnect();

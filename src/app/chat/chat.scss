@@ -136,6 +136,30 @@
 }
 
 .message-bubble {
+  position: relative;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: #f1f1f1;
+}
+
+.reply-btn {
+  position: absolute;
+  right: -30px; /* adjust for spacing */
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0;              /* hidden by default */
+  transition: opacity 0.2s;
+}
+
+.message-wrapper:hover .reply-btn {
+  opacity: 1;              /* show on hover */
+}
+
+
+.message-bubble {
   max-width: 70%;
   padding: 12px 16px;
   border-radius: 18px;
