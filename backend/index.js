@@ -35,8 +35,6 @@ mongoose.connect('mongodb://localhost:27017/ChatDB', {
 //Shows who is using the socket/who is connected and who disconnected
 io.on('connection', (socket) =>{
   console.log('A user connected:', socket.id);
-  
-
   socket.on('disconnect', () =>{
     console.log('User disconnected', socket.id);
   });
