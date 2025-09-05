@@ -23,6 +23,7 @@ export class Signup {
     emailId: ['', [Validators.required, Validators.email]],
     fullName: ['', Validators.required],
     password: ['', Validators.required],
+    confirm: ['', Validators.required],
   });
   onSubmit(): void {
    if (this.form.invalid) {

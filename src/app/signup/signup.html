@@ -14,6 +14,10 @@
     <div>
       <input type="password" placeholder="Password" formControlName="password"/>
     </div>
+       <div>
+      <input type="password" placeholder="Confirm Password" formControlName="confirm"/>
+      <div *ngIf="form.get('confirm')?.value !== form.get('password')?.value"> It was not the same Password</div>
+    </div>
     <div>
       <button type="submit" [disabled]="form.invalid">Sign Up</button>
     </div>
