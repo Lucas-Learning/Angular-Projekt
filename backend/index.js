@@ -23,9 +23,9 @@ const io = socketIo(server, {
 app.use(cors());
 app.use(bodyParser.json());
 
-const JWT_SECRET = process.env.JWT_SECRET; // use env var in real projects
+const JWT_SECRET = process.env.JWT_SECRET; // Gets the Secret code from the .env file
 
-//connects to the mongoDB database which is were all the data is
+//connects to the mongoDB database which is were all the data is. The url link is in the .env file
 mongoose.connect(`${process.env.MONGODB_URL}`, {
   useNewUrlParser: true,
   useUnifiedTopology: true
