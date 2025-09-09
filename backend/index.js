@@ -9,6 +9,7 @@ const User = require('./models/User');
 const Message = require('./models/Message');
 const socketIo = require('socket.io');
 const http = require('http');
+require("dotenv").config();
 
 //Creates the server and the socketIO module that looks after the messages
 const app = express();
@@ -22,10 +23,10 @@ const io = socketIo(server, {
 app.use(cors());
 app.use(bodyParser.json());
 
-const JWT_SECRET = 'your-very-secret-key'; // use env var in real projects
+const JWT_SECRET = process.env.JWT_SECRET; // use env var in real projects
 
 //connects to the mongoDB database which is were all the data is
-mongoose.connect('mongodb://localhost:27017/ChatDB', {
+mongoose.connect(`${process.env.MONGODB_URL}`, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
@@ -35,8 +36,6 @@ mongoose.connect('mongodb://localhost:27017/ChatDB', {
 //Shows who is using the socket/who is connected and who disconnected
 io.on('connection', (socket) =>{
   console.log('A user connected:', socket.id);
-  
-
   socket.on('disconnect', () =>{
     console.log('User disconnected', socket.id);
   });

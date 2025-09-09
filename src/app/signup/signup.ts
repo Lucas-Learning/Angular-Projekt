@@ -28,7 +28,7 @@ export class Signup {
   onSubmit(): void {
    if (this.form.invalid) {
     this.form.markAllAsTouched();
-    return; // Stop here if invalid
+    return; // Stop here if invalid 
    }
     console.log(this.form.getRawValue())
     this.http
