@@ -1,14 +1,19 @@
 p, button{
   font-size: x-large;
+  margin: 0%;
+  margin-bottom: 2%;
 }
 .topnav {
   background-color: #222222;
   text-align: center;
   font-family: 'Segoe UI', sans-serif;
 }
-.nav{
-  height: 200%;
+.TextWelcome{
+  margin-left: 30.5%;
+  margin-top: 6.7%;
+  font-size: 325%;
 }
+
 .topnav p{
   color: #fff;
 }
@@ -24,7 +29,7 @@ color: #6A3ECF;
 transition: 0.25s;
 }
 .Signup,.Login{
-  margin:1%;
+  margin: 1%;
       padding: 0.75rem 1rem;
       background: #6A3ECF;
       color: #fff;
@@ -42,12 +47,19 @@ transition: 0.25s;
         transform: scale(0.98);
       }
 }
+.menu-container{
+  display: flex;
+  max-height: 222px;
+}
 .Logout{
       padding: 0.75rem 1rem;
       background: #6A3ECF;
+      margin-left: auto;
+      margin-top: 7%;
       color: #fff;
       border: none;
       border-radius: 10px;
+      height: 60px;
       cursor: pointer;
       transition: transform 0.2s ease, box-shadow 0.3s ease;
       &:hover {
@@ -59,7 +71,10 @@ transition: 0.25s;
         transform: scale(0.98);
       }
 }
-
-img{
+.imgfp{
   height: 200px;
+}
+.imgchat{
+  height: 150px;
+  margin-top: 4%;
 }

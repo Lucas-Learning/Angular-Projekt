@@ -1,19 +1,24 @@
 <div class="topnav">
-<img src="Toki.png">
-<p *ngIf="authService.currentUserSig() as user">
-  Welcome back, {{ user.fullName }}!
-</p>
-<p *ngIf="!authService.currentUserSig()">You're not logged in.</p>
+
+
 
 <!-- Show login/signup links only when NOT logged in -->
 <nav *ngIf="!authService.currentUserSig()">
+  <img src="Toki.png" class="imgfp">
+  <p>You're not logged in.</p>
   <a routerLink="/login" class="Login">Login</a>
   <a routerLink="/signup" class="Signup">Signup</a>
 </nav>            
 
 <!-- Show logout button and chat link when logged in -->
 <nav *ngIf="authService.currentUserSig()">
+<div class="menu-container">
+<img src="Toki.png" class="imgchat">
+ <p *ngIf="authService.currentUserSig() as user" class="TextWelcome">
+  Welcome back, {{ user.fullName }}!
+</p>
   <button (click)="logout()" class="Logout">Logout</button>
+    </div>
 </nav>
 </div>
 
