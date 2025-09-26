@@ -34,26 +34,27 @@
     <input type="file" class="file-input"
     (change)="onFileSelected($event)"#fileUpload hidden>
 
-  <div class="file-upload">
+     <div class="file-upload">
+      
 {{fileName || "No file uploaded yet."}}
 
 <button mat-mini-fab color="primary" class="upload-btn"
 (click)="fileUpload.click()">
 <mat-icon>attach_file</mat-icon>
 </button>
-<button *ngIf="selectedFile" mat-minifab color="accent" (click)="uploadFile()">
+<button *ngIf="selectedFile" mat-mini-fab color="accent" (click)="uploadFile()" class="upload-btn">
   <mat-icon>cloud_upload</mat-icon>
 </button>
-  </div>
+    </div>
     <form [formGroup]="form" (ngSubmit)="sendMessage()" class="message-form">
-      <div class="input-wrapper">
+    <div class="input-wrapper">
         <input 
           type="text" 
           formControlName="message" 
           placeholder="Type a message..." 
           class="message-input"
           autocomplete="off" />
-      </div>
+    </div>
       <button type="submit" class="send-btn" [disabled]="!form.get('message')?.value?.trim()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
           <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
