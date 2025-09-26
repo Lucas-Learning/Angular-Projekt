@@ -83,22 +83,30 @@ scrollToBottom(): void {
       error: (err) => console.error('Failed to send message', err),
     });
   }
-  fileName ='';
+fileName = '';
+selectedFile: File | null = null;
 
-  
-  onFileSelected(event:any){
-    const file:File = event.target.files[0];
+onFileSelected(event: any) {
+  const file: File = event.target.files[0];
+  if (!file) return;
 
-    if (file){
-      this.fileName = file.name;
+  this.selectedFile = file;
+  this.fileName = file.name;
+}
+uploadFile() {
+  if (!this.selectedFile) return;
 
-      const formData = new FormData();
+  const formData = new FormData();
+  formData.append("file", this.selectedFile);
+  formData.append("sender", this.currentUser); // so we know who sent it
 
-      formData.append("thumbnail", file);
-
-      const upload$ = this.http.post("/api/thumbnail-upload", formData)
-
-      upload$.subscribe();
-    }
-  }
+  this.http.post(`${this.API_BASE}/api/upload`, formData).subscribe({
+    next: (res) => {
+      console.log("Upload success:", res);
+      this.fileName = '';
+      this.selectedFile = null;
+    },
+    error: (err) => console.error("Upload failed:", err)
+  });
+}
 }

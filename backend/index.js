@@ -9,6 +9,8 @@ const User = require('./models/User');
 const Message = require('./models/Message');
 const socketIo = require('socket.io');
 const http = require('http');
+const multer = require('multer');
+const path = require('path');
 require("dotenv").config();
 
 //Creates the server and the socketIO module that looks after the messages
@@ -47,6 +49,46 @@ app.get('/api/getusers', async (req, res) => {
     res.status(200).json({ users });
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch users', details: err.message });
+  }
+});
+
+// where to store uploaded files
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // folder in project root
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); 
+  }
+});
+const upload = multer({ storage });
+
+// serve uploaded files statically
+app.use('/uploads', express.static('uploads'));
+
+// new route for file uploads
+app.post('/api/upload', upload.single('file'), async (req, res) => {
+  try {
+    const { sender } = req.body;
+    const fileUrl = `/uploads/${req.file.filename}`;
+
+    const msg = new Message({
+      sender,
+      fileUrl,
+      fileName: req.file.originalname
+    });
+    await msg.save();
+
+    io.emit('message', {
+      sender: msg.sender,
+      fileUrl: msg.fileUrl,
+      fileName: msg.fileName,
+      timestamp: msg.timestamp
+    });
+
+    res.status(201).json({ message: 'File uploaded', fileUrl });
+  } catch (err) {
+    res.status(500).json({ error: 'Upload failed', details: err.message });
   }
 });
 

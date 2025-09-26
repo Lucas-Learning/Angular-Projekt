@@ -32,13 +32,17 @@
   </div>
   <div class="message-input-container">
     <input type="file" class="file-input"
-    (change)="onFileSelected($event)"#fileUpload>
+    (change)="onFileSelected($event)"#fileUpload hidden>
+
   <div class="file-upload">
 {{fileName || "No file uploaded yet."}}
 
 <button mat-mini-fab color="primary" class="upload-btn"
 (click)="fileUpload.click()">
 <mat-icon>attach_file</mat-icon>
+</button>
+<button *ngIf="selectedFile" mat-minifab color="accent" (click)="uploadFile()">
+  <mat-icon>cloud_upload</mat-icon>
 </button>
   </div>
     <form [formGroup]="form" (ngSubmit)="sendMessage()" class="message-form">
