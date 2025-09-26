@@ -5,13 +5,14 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../app-layout/auth.service';
 import { SocketService } from '../socket';
+import {MatIconModule} from '@angular/material/icon';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
   templateUrl: './chat.html',
   styleUrl: './chat.scss',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,MatIconModule],
 })
 
 export class Chat implements OnInit, OnDestroy {
@@ -81,5 +82,23 @@ scrollToBottom(): void {
       },
       error: (err) => console.error('Failed to send message', err),
     });
+  }
+  fileName ='';
+
+  
+  onFileSelected(event:any){
+    const file:File = event.target.files[0];
+
+    if (file){
+      this.fileName = file.name;
+
+      const formData = new FormData();
+
+      formData.append("thumbnail", file);
+
+      const upload$ = this.http.post("/api/thumbnail-upload", formData)
+
+      upload$.subscribe();
+    }
   }
 }
