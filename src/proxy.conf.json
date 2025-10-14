@@ -1,6 +1,6 @@
 {
     "/api": {
-      "target": "http://10.0.11.147:3000",
+      "target": "http://10.0.10.137:3000",
       "secure": false,
       "changeOrigin": false 
     }

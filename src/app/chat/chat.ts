@@ -17,7 +17,7 @@ import {MatIconModule} from '@angular/material/icon';
 
 export class Chat implements OnInit, OnDestroy {
   @ViewChild('messagesContainer') messagesList!: ElementRef<HTMLDivElement>;
-  API_BASE = 'http://10.0.11.147:3000';
+  API_BASE = 'http://10.0.10.137:3000';
   fb = inject(FormBuilder);
   http = inject(HttpClient);
   authService = inject(AuthService);
