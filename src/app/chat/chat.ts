@@ -31,7 +31,7 @@ export class Chat implements OnInit, OnDestroy {
   currentUser: string = ""
 
   private subscription: any;
-  
+
 
   ngOnInit(): void {
     const user = this.authService.currentUserSig();
@@ -85,6 +85,7 @@ scrollToBottom(): void {
   }
 fileName = '';
 selectedFile: File | null = null;
+fileUrl = `/uploads/${this.fileName}`;
 
 onFileSelected(event: any) {
   const file: File = event.target.files[0];

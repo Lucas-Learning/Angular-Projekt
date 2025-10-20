@@ -44,6 +44,7 @@
 </button>
 <button *ngIf="selectedFile" mat-mini-fab color="accent" (click)="uploadFile()" class="upload-btn">
   <mat-icon>cloud_upload</mat-icon>
+  <img [src]="fileUrl" width="100px" height="100px">
 </button>
     </div>
     <form [formGroup]="form" (ngSubmit)="sendMessage()" class="message-form">
