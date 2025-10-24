@@ -27,7 +27,7 @@ export class Chat implements OnInit, OnDestroy {
     message: ['', Validators.required],
   });
 
-  messages: { text: string; sender: string; timestamp: string }[] = [];
+  messages: { text: string; sender: string; timestamp: string, fileUrl?: string; fileName?: string; }[] = [];
   currentUser: string = ""
 
   private subscription: any;
@@ -94,6 +94,10 @@ onFileSelected(event: any) {
   this.selectedFile = file;
   this.fileName = file.name;
 }
+isImage(fileUrl: string): boolean {
+  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg'];
+  return imageExtensions.some(ext => fileUrl.endsWith(ext));
+}
 uploadFile() {
   if (!this.selectedFile) return;
 
@@ -102,10 +106,18 @@ uploadFile() {
   formData.append("sender", this.currentUser); // so we know who sent it
 
   this.http.post(`${this.API_BASE}/api/upload`, formData).subscribe({
-    next: (res) => {
+    next: (res: any) => {
       console.log("Upload success:", res);
+      this.messages.push({
+        text: "",  // Empty text for file
+        sender: this.currentUser,
+        timestamp: new Date().toISOString(),
+        fileUrl: res.fileUrl,
+        fileName: this.fileName,
+      });
       this.fileName = '';
       this.selectedFile = null;
+      this.scrollToBottom(); // Scroll to the latest message
     },
     error: (err) => console.error("Upload failed:", err)
   });

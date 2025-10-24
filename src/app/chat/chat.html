@@ -21,6 +21,9 @@
         <div class="message-bubble">
           <div class="message-content">
             <div class="message-text">{{ msg.text }}</div>
+            <div *ngIf="msg.fileUrl">
+          <img *ngIf="isImage(msg.fileUrl)" [src]="msg.fileUrl" alt="Image" class="message-image"/>
+          <a *ngIf="!isImage(msg.fileUrl)" [href]="msg.fileUrl" target="_blank">{{ msg.fileName }}</a>
           </div>
           <div class="message-meta">
             <span class="message-sender" *ngIf="msg.sender !== currentUser">{{ msg.sender }}</span>
